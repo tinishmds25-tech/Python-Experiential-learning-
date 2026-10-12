@@ -1,0 +1,111 @@
+# Music Playlist Management System (Doubly Linked List)
+
+class Node:
+    def __init__(self, title, artist):
+        self.title = title
+        self.artist = artist
+        self.prev = None
+        self.next = None
+
+
+class Playlist:
+    def __init__(self):
+        self.head = None
+        self.tail = None
+
+    # Add a song at the end
+    def add_song(self, title, artist):
+        new = Node(title, artist)
+        if self.head is None:
+            self.head = new
+            self.tail = new
+        else:
+            new.prev = self.tail
+            self.tail.next = new
+            self.tail = new
+        print("Song added:", title)
+
+    # Delete a song by title
+    def delete_song(self, title):
+        cur = self.head
+        while cur is not None:
+            if cur.title.lower() == title.lower():
+                if cur.prev is not None:
+                    cur.prev.next = cur.next
+                else:
+                    self.head = cur.next
+                if cur.next is not None:
+                    cur.next.prev = cur.prev
+                else:
+                    self.tail = cur.prev
+                print("Song deleted:", cur.title)
+                return
+            cur = cur.next
+        print("Song not found")
+
+    # Search a song by title
+    def search_song(self, title):
+        cur = self.head
+        position = 1
+        while cur is not None:
+            if title.lower() in cur.title.lower():
+                print("Found at position", position, ":", cur.title, "-", cur.artist)
+                return
+            cur = cur.next
+            position += 1
+        print("Song not found")
+
+    # Show songs from first to last
+    def show_forward(self):
+        if self.head is None:
+            print("Playlist is empty")
+            return
+        cur = self.head
+        number = 1
+        while cur is not None:
+            print(str(number) + ". " + cur.title + " - " + cur.artist)
+            cur = cur.next
+            number += 1
+
+    # Show songs from last to first
+    def show_backward(self):
+        if self.tail is None:
+            print("Playlist is empty")
+            return
+        cur = self.tail
+        while cur is not None:
+            print(cur.title + " - " + cur.artist)
+            cur = cur.prev
+
+
+playlist = Playlist()
+
+while True:
+    print("\n----- Music Playlist Menu -----")
+    print("1. Add song")
+    print("2. Delete song")
+    print("3. Search song")
+    print("4. Show playlist (forward)")
+    print("5. Show playlist (backward)")
+    print("6. Exit")
+    choice = input("Enter your choice: ")
+
+    if choice == "1":
+        title = input("Enter song title: ")
+        artist = input("Enter artist name: ")
+        playlist.add_song(title, artist)
+    elif choice == "2":
+        title = input("Enter song title to delete: ")
+        playlist.delete_song(title)
+    elif choice == "3":
+        title = input("Enter song title to search: ")
+        playlist.search_song(title)
+    elif choice == "4":
+        playlist.show_forward()
+    elif choice == "5":
+        playlist.show_backward()
+    elif choice == "6":
+        print("Thank you!")
+        break
+    else:
+        print("Invalid choice, try again")
