@@ -1,0 +1,118 @@
+# playlist.py - Music Playlist using a doubly linked list (basic Python)
+
+class Node:
+    def __init__(self, title, artist):
+        self.title = title
+        self.artist = artist
+        self.prev = None
+        self.next = None
+
+
+class Playlist:
+    def __init__(self):
+        self.head = None
+        self.tail = None
+        self.current = None
+        self.size = 0
+
+    def add_song(self, title, artist):
+        new = Node(title, artist)
+        if self.head is None:
+            self.head = new
+            self.tail = new
+            self.current = new
+        else:
+            new.prev = self.tail
+            self.tail.next = new
+            self.tail = new
+        self.size += 1
+
+    def delete_song(self, title):
+        cur = self.head
+        while cur is not None:
+            if cur.title.lower() == title.lower():
+                if self.current is cur:
+                    self.current = cur.next if cur.next else cur.prev
+                if cur.prev is not None:
+                    cur.prev.next = cur.next
+                else:
+                    self.head = cur.next
+                if cur.next is not None:
+                    cur.next.prev = cur.prev
+                else:
+                    self.tail = cur.prev
+                self.size -= 1
+                print("Deleted:", cur.title)
+                return True
+            cur = cur.next
+        print("Song not found")
+        return False
+
+    def search_song(self, keyword):
+        found = []
+        cur = self.head
+        while cur is not None:
+            if keyword.lower() in cur.title.lower():
+                found.append(cur.title + " - " + cur.artist)
+            cur = cur.next
+        return found
+
+    def display_forward(self):
+        cur = self.head
+        i = 1
+        while cur is not None:
+            print(str(i) + ". " + cur.title + " - " + cur.artist)
+            cur = cur.next
+            i += 1
+        if i == 1:
+            print("Playlist is empty")
+
+    def display_backward(self):
+        cur = self.tail
+        while cur is not None:
+            print(cur.title + " - " + cur.artist)
+            cur = cur.prev
+
+    def add_first(self, title, artist):
+        new = Node(title, artist)
+        if self.head is None:
+            self.head = new
+            self.tail = new
+            self.current = new
+        else:
+            new.next = self.head
+            self.head.prev = new
+            self.head = new
+        self.size += 1
+
+    def play_next(self):
+        if self.current is None:
+            print("Playlist is empty")
+            return
+        if self.current.next is not None:
+            self.current = self.current.next
+        print("Now playing:", self.current.title)
+
+    def play_previous(self):
+        if self.current is None:
+            print("Playlist is empty")
+            return
+        if self.current.prev is not None:
+            self.current = self.current.prev
+        print("Now playing:", self.current.title)
+
+    def to_list(self):
+        titles = []
+        cur = self.head
+        while cur is not None:
+            titles.append(cur.title)
+            cur = cur.next
+        return titles
+
+    def to_list_reverse(self):
+        titles = []
+        cur = self.tail
+        while cur is not None:
+            titles.append(cur.title)
+            cur = cur.prev
+        return titles
