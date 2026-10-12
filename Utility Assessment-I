@@ -1,0 +1,92 @@
+# playlist.py - Music Playlist using a doubly linked list (Version 1: logic design)
+
+class Node:
+    def __init__(self, title, artist):
+        self.title = title
+        self.artist = artist
+        self.prev = None      # link to previous song
+        self.next = None      # link to next song
+
+
+class Playlist:
+    def __init__(self):
+        self.head = None      # first song
+        self.tail = None      # last song
+        self.current = None   # song that is playing
+        self.size = 0
+
+    def add_end(self, title, artist):
+        new = Node(title, artist)
+        if self.head is None:
+            self.head = new
+            self.tail = new
+            self.current = new
+        else:
+            new.prev = self.tail
+            self.tail.next = new
+            self.tail = new
+        self.size += 1
+
+    def add_start(self, title, artist):
+        new = Node(title, artist)
+        if self.head is None:
+            self.head = new
+            self.tail = new
+            self.current = new
+        else:
+            new.next = self.head
+            self.head.prev = new
+            self.head = new
+        self.size += 1
+
+    def delete(self, title):
+        cur = self.head
+        while cur is not None:
+            if cur.title == title:
+                if self.current is cur:
+                    self.current = cur.next if cur.next else cur.prev
+                if cur.prev is not None:
+                    cur.prev.next = cur.next
+                else:
+                    self.head = cur.next
+                if cur.next is not None:
+                    cur.next.prev = cur.prev
+                else:
+                    self.tail = cur.prev
+                self.size -= 1
+                print("Deleted:", title)
+                return
+            cur = cur.next
+        print("Song not found")
+
+    def next_song(self):
+        if self.current is not None and self.current.next is not None:
+            self.current = self.current.next
+        if self.current is not None:
+            print("Now playing:", self.current.title)
+
+    def prev_song(self):
+        if self.current is not None and self.current.prev is not None:
+            self.current = self.current.prev
+        if self.current is not None:
+            print("Now playing:", self.current.title)
+
+    def show(self):
+        cur = self.head
+        i = 1
+        while cur is not None:
+            print(str(i) + ". " + cur.title + " - " + cur.artist)
+            cur = cur.next
+            i += 1
+
+
+# ---- Demo to check the logic ----
+p = Playlist()
+p.add_end("Believer", "Imagine Dragons")
+p.add_end("Perfect", "Ed Sheeran")
+p.add_start("Shape of You", "Ed Sheeran")
+p.show()
+p.delete("Perfect")
+p.next_song()
+p.prev_song()
+p.show()
